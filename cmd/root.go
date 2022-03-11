@@ -27,7 +27,12 @@ var rootCmd = &cobra.Command{
 		// create directory for m-flasher
 		home, _ := os.UserHomeDir()
 		fmt.Println("home:", home)
-		mf := home + "/" + "meshtastic-flasher"
+		slash := "/"
+		if runtime.GOOS == "windows" {
+			slash = "\\"
+		}
+
+		mf := home + slash + "meshtastic-flasher"
 		fmt.Println("mf:", mf)
 		if _, err := os.Stat(mf); errors.Is(err, os.ErrNotExist) {
 			err := os.Mkdir(mf, os.ModePerm)
@@ -38,11 +43,11 @@ var rootCmd = &cobra.Command{
 		}
 
 		// create python virtual environment, if we need to
-		venv := mf + "/" + "venv"
+		venv := mf + slash + "venv"
 		if _, err := os.Stat(venv); errors.Is(err, os.ErrNotExist) {
 			if runtime.GOOS == "windows" {
 				// command prompt
-				cmd := exec.Command("cmd", "/C", "cd", mf, ";", "python", "-m", "venv", "venv")
+				cmd := exec.Command("cmd", "/C", "cd", mf, "&", "python", "-m", "venv", "venv")
 				if err := cmd.Run(); err != nil {
 					log.Fatal("Could not create python virtual environment")
 				}
@@ -61,7 +66,7 @@ var rootCmd = &cobra.Command{
 		// run it
 		if runtime.GOOS == "windows" {
 			// command prompt
-			cmd := exec.Command("cmd", "/C", "cd " + mf + "; venv\\Scripts\\activate", "&", "python", "-m", "pip", "install", "--upgrade", "pip", "&", "pip", "install", "--upgrade", "meshtastic-flasher", "&", "meshtastic-flasher")
+			cmd := exec.Command("cmd", "/C", "cd " + mf + "&", "venv\\Scripts\\activate", "&", "python", "-m", "pip", "install", "--upgrade", "pip", "&", "pip", "install", "--upgrade", "meshtastic-flasher", "&", "meshtastic-flasher")
 			if err := cmd.Run(); err != nil {
 				log.Fatal("Could not run pip commands")
 			}
