@@ -8,4 +8,6 @@ Notes to get started:
  cobra-cli init -a "Mike Kinney"
 
  See https://taskfile.dev/#/installation
- brew install go-task/tap/go-task
+  brew install go-task/tap/go-task
+ or
+  go install github.com/go-task/task/v3/cmd/task@latest
