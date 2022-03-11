@@ -41,23 +41,23 @@ jobs:
         with:
           go-version: 1.17
 
-      - name: Setup code signing
-        env:
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-          MACOS_KEYCHAIN_PASSWORD: ${{ secrets.MACOS_KEYCHAIN_PASSWORD }}
-        run: |
-          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-          security create-keychain -p "$MACOS_KEYCHAIN_PASSWORD" meshtastic.keychain
-          security default-keychain -s meshtastic.keychain
-          security unlock-keychain -p "$MACOS_KEYCHAIN_PASSWORD" meshtastic.keychain
-          security import certificate.p12 -k meshtastic.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PASSWORD" meshtastic.keychain
+#      - name: Setup code signing
+#        env:
+#          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+#          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+#          MACOS_KEYCHAIN_PASSWORD: ${{ secrets.MACOS_KEYCHAIN_PASSWORD }}
+#        run: |
+#          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+#          security create-keychain -p "$MACOS_KEYCHAIN_PASSWORD" meshtastic.keychain
+#          security default-keychain -s meshtastic.keychain
+#          security unlock-keychain -p "$MACOS_KEYCHAIN_PASSWORD" meshtastic.keychain
+#          security import certificate.p12 -k meshtastic.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+#          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PASSWORD" meshtastic.keychain
 
         # TODO: sign
       - name: Build
-        env:
-          MACOS_SIGNING_IDENTITY: ${{ secrets.MACOS_SIGNING_IDENTITY }}
+#        env:
+#          MACOS_SIGNING_IDENTITY: ${{ secrets.MACOS_SIGNING_IDENTITY }}
         run: |
           go build -o bin/meshtastic-cli main.go
 
@@ -96,5 +96,5 @@ jobs:
         with:
           upload_url: ${{ needs.release_create.outputs.upload_url }}
           asset_path: bin/meshtastic-cli
-          asset_name: meshtastic-flasher-windows
+          asset_name: meshtastic-flasher-windows.exe
           asset_content_type: application/zip
